@@ -1,6 +1,7 @@
 #!/bin/bash
 result=0
-echo "" > commit_issues.txt
+# Create an empty file to store the commit issues
+: > commit_issues.txt
 
 commits=$(git log --format=%H)
 for commit in $commits; do
@@ -30,7 +31,8 @@ for commit in $commits; do
   if [ -n "$body" ]; then
     while IFS= read -r line; do
       if [ ${#line} -gt 72 ]; then
-        echo "Commit ${commit:0:7} message body line is too long (max. 72 chars): $line" >> commit_issues.txt
+        echo "Commit ${commit:0:7} message body line is too long (max. 72 chars):" >> commit_issues.txt
+        echo "$line" >> commit_issues.txt
         result=1
       fi
     done <<< "$body"
