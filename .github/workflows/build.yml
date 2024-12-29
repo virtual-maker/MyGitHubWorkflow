@@ -9,6 +9,8 @@ on:
     branches:
       - main
       - development
+  # Allows you to run this workflow manually from the Actions tab for every branch
+  workflow_dispatch:
 
 jobs:
   build:
