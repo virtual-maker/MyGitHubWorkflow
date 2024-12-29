@@ -1,0 +1,35 @@
+name: Build Arduino Project
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Arduino CLI
+      uses: arduino/setup-arduino-cli@v1
+      with:
+        version: 'latest'
+
+    - name: Install dependencies
+      run: |
+        arduino-cli core update-index
+        arduino-cli core install arduino:avr
+        arduino-cli lib install "Firmata"
+        arduino-cli lib install "Wire"
+        arduino-cli lib install "SPI"
+        arduino-cli lib install "Servo"
+
+    - name: Compile sketch
+      run: |
+        arduino-cli compile --fqbn arduino:avr:uno examples/MaterialBoard/MaterialBoard.ino
