@@ -35,10 +35,6 @@ for commit in $commits; do
       fi
     done <<< "$body"
   fi
-
-if [ $result -ne 0 ]; then
-  exit 1
-fi
 done
 
 echo "Greetings! Here is my evaluation of your pull request:" > error_log.txt
