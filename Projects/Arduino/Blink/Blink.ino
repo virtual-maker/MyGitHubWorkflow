@@ -28,6 +28,9 @@ void setup() {
   pinMode(LED_BUILTIN, OUTPUT);
 }
 
+// Loop counter definition
+int loopCounter = 0;
+
 // the loop function runs over and over again forever
 void loop() {
   digitalWrite(LED_BUILTIN, HIGH);  // turn the LED on (HIGH is the voltage level)
