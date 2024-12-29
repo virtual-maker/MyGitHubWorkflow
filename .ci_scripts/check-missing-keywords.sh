@@ -9,7 +9,8 @@ if [ -n "$missing_keywords" ]; then
   result=1
 fi
 
-missing_keywords_2=$(SOURCE_FILES="core/ drivers/ hal/ examples/ examples_linux/ MyConfig.h MySensors.h"; for keyword in $(grep -whore  'MY_[A-Z][A-Z_0-9]*' $SOURCE_FILES | sort -u ); do grep -q $keyword keywords.txt || echo $keyword; done)
+#missing_keywords_2=$(SOURCE_FILES="core/ drivers/ hal/ examples/ examples_linux/ MyConfig.h MySensors.h"; for keyword in $(grep -whore  'MY_[A-Z][A-Z_0-9]*' $SOURCE_FILES | sort -u ); do grep -q $keyword keywords.txt || echo $keyword; done)
+missing_keywords_2=$(SOURCE_FILES="Projects/ MyConfig.h"; for keyword in $(grep -whore  'MY_[A-Z][A-Z_0-9]*' $SOURCE_FILES | sort -u ); do grep -q $keyword keywords.txt || echo $keyword; done)
 if [ -n "$missing_keywords_2" ]; then
   echo "<b>Keywords in code that don't exist in keywords.txt:</b>" > missing_keywords_2.txt
   echo "If keywords aren't in keywords.txt, they will not be highlighted in the Arduino IDE. Highlighting makes the code easier to follow and helps spot spelling mistakes." > missing_keywords_2.txt
@@ -18,7 +19,8 @@ if [ -n "$missing_keywords_2" ]; then
   result=1
 fi
 
-missing_keywords_3=$(SOURCE_FILES="core/ drivers/ hal/ examples/ examples_linux/ MyConfig.h MySensors.h"; for keyword in $(grep -whore  'MY_[A-Z][A-Z_0-9]*' $SOURCE_FILES | sort -u ); do grep -q $keyword keywords.txt || echo $keyword; done)
+#missing_keywords_3=$(SOURCE_FILES="core/ drivers/ hal/ examples/ examples_linux/ MyConfig.h MySensors.h"; for keyword in $(grep -whore  'MY_[A-Z][A-Z_0-9]*' $SOURCE_FILES | sort -u ); do grep -q $keyword keywords.txt || echo $keyword; done)
+missing_keywords_3=$(SOURCE_FILES="Projects/ MyConfig.h"; for keyword in $(grep -whore  'MY_[A-Z][A-Z_0-9]*' $SOURCE_FILES | sort -u ); do grep -q $keyword keywords.txt || echo $keyword; done)
 if [ -n "$missing_keywords_3" ]; then
   echo "<b>Keywords in code that don't have Doxygen comments and aren't blacklisted in keywords.txt:</b>" > missing_keywords_3.txt
   echo "If keywords don't have Doxygen comments, they will not be available at https://www.mysensors.org/apidocs/index.html Add Doxygen comments to make it easier for users to find and understand how to use the new keywords." > missing_keywords_3.txt
@@ -42,7 +44,7 @@ if git grep -q boolean -- `git ls-files | grep -v butler.sh`; then
 fi
 
 echo "Greetings! Here is my evaluation of your pull request:<br>" > butler.html
-awk 'FNR==1{print "<br>"}1' too_long_subjects.txt leading_lowercases.txt trailing_periods.txt too_long_body_lines.txt missing_keywords.txt missing_keywords_2.txt missing_keywords_3.txt tab_spaces_keywords.txt booleans.txt >> butler.html
+awk 'FNR==1{print "<br>"}1' missing_keywords.txt missing_keywords_2.txt missing_keywords_3.txt tab_spaces_keywords.txt booleans.txt >> butler.html
 echo "<br>" >> butler.html
 if [ $result -ne 0 ]; then
 	echo "<b>I am afraid there are some issues with your commit messages and/or use of keywords.</b><br>" >> butler.html
