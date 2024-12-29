@@ -17,11 +17,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Check commit message format
-      run: ./.ci_scripts/check-commit-message.sh
-
     - name: Checkout repository
       uses: actions/checkout@v2
+
+    - name: Check commit message format
+      run: ./.ci_scripts/check-commit-message.sh
 
     - name: Set up Arduino CLI
       uses: arduino/setup-arduino-cli@master
