@@ -1,10 +1,12 @@
 #!/bin/bash
 result=0
 
+: > missing_keywords.txt
 missing_keywords=$(for keyword in $(grep -A999 '#if DOXYGEN' MyConfig.h | grep -B999 '#endif' | grep '#define' | awk '{ print $2 '} | grep -e '^MY_'); do grep -q $keyword keywords.txt || echo $keyword; done)
 if [ -n "$missing_keywords" ]; then
   echo "Keywords that are missing from keywords.txt:" > missing_keywords.txt
   echo "$missing_keywords" >> missing_keywords.txt
+  echo "missing_keywords"
   result=1
 fi
 
@@ -14,6 +16,7 @@ if [ -n "$missing_keywords_2" ]; then
   echo "Keywords in code that don't exist in keywords.txt:" > missing_keywords_2.txt
   echo "If keywords aren't in keywords.txt, they will not be highlighted in the Arduino IDE. Highlighting makes the code easier to follow and helps spot spelling mistakes." > missing_keywords_2.txt
   echo "$missing_keywords_2" >> missing_keywords_2.txt
+  echo "missing_keywords_2"
   result=1
 fi
 
@@ -24,6 +27,7 @@ if [ -n "$missing_keywords_3" ]; then
   echo "Keywords in code that don't have Doxygen comments and aren't blacklisted in keywords.txt:" > missing_keywords_3.txt
   echo "If keywords don't have Doxygen comments, they will not be available at https://www.mysensors.org/apidocs/index.html Add Doxygen comments to make it easier for users to find and understand how to use the new keywords." > missing_keywords_3.txt
   echo "$missing_keywords_3" >> missing_keywords_3.txt
+  echo "missing_keywords_3"
   result=1
 fi
 
@@ -31,12 +35,14 @@ tab_spaces_keywords=$(grep -e '[[:space:]]KEYWORD' -e '[[:space:]]LITERAL1' keyw
 if [ -n "$tab_spaces_keywords" ]; then
   echo "Keywords that use space instead of TAB in keywords.txt:" > tab_spaces_keywords.txt
   echo "$tab_spaces_keywords" >> tab_spaces_keywords.txt
-  result=1
+  echo "tab_spaces_keywords"
+result=1
 fi
 
 # Evaluate if there exists booleans in the code tree (not counting this file)
 if git grep -q boolean -- `git ls-files | grep -v butler.sh`; then
   echo "You have added at least one occurence of the deprecated boolean data type. Please use bool instead." > booleans.txt
+  echo "booleans"
   result=1
 fi
 
