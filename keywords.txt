@@ -1,8 +1,8 @@
 #######################################
 # Datatypes (KEYWORD1)
 #######################################
-MyMessage       KEYWORD1
-MyMultiMessage  KEYWORD1
+MyMessage	KEYWORD1
+MyMultiMessage	KEYWORD1
 
 #######################################
 # Methods and Functions (KEYWORD2)
@@ -31,8 +31,8 @@ smartSleep	KEYWORD2
 # Constants (LITERAL1)
 #######################################
 # General
-MY_BAUD_RATE	LITERAL1
-MY_CORE_ONLY	LITERAL1
+MY_BAUD_RATE    LITERAL1
+MY_CORE_ONLY    LITERAL1
 MY_CORE_MIN_VERSION	LITERAL1
 MY_CORE_VERSION	LITERAL1
 MY_CRITICAL_SECTION	LITERAL1
