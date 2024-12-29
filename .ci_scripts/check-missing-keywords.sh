@@ -1,7 +1,13 @@
 #!/bin/bash
 result=0
 
+# Create empty files to store the commit issues
 : > missing_keywords.txt
+: > missing_keywords_2.txt
+: > missing_keywords_3.txt
+: > tab_spaces_keywords.txt
+: > booleans.txt
+
 missing_keywords=$(for keyword in $(grep -A999 '#if DOXYGEN' MyConfig.h | grep -B999 '#endif' | grep '#define' | awk '{ print $2 '} | grep -e '^MY_'); do grep -q $keyword keywords.txt || echo $keyword; done)
 if [ -n "$missing_keywords" ]; then
   echo "Keywords that are missing from keywords.txt:" > missing_keywords.txt
@@ -17,6 +23,7 @@ if [ -n "$missing_keywords_2" ]; then
   echo "If keywords aren't in keywords.txt, they will not be highlighted in the Arduino IDE. Highlighting makes the code easier to follow and helps spot spelling mistakes." > missing_keywords_2.txt
   echo "$missing_keywords_2" >> missing_keywords_2.txt
   echo "missing_keywords_2"
+  cat missing_keywords_2.txt
   result=1
 fi
 
@@ -43,6 +50,7 @@ fi
 if git grep -q boolean -- `git ls-files | grep -v butler.sh`; then
   echo "You have added at least one occurence of the deprecated boolean data type. Please use bool instead." > booleans.txt
   echo "booleans"
+  cat booleans.txt
   result=1
 fi
 
