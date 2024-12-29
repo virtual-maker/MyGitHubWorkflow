@@ -27,7 +27,7 @@ jobs:
         arduino-cli core install arduino:avr
         arduino-cli lib install "Firmata"
         #arduino-cli lib install "Wire"
-        arduino-cli lib install "SPI"
+        #arduino-cli lib install "SPI"
         arduino-cli lib install "Servo"
 
     - name: Compile sketch
