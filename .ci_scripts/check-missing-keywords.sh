@@ -17,6 +17,7 @@ if [ -n "$missing_keywords_2" ]; then
   result=1
 fi
 
+#ToDo: The grep command for missing_keywords_3 is equal to missing_keywords_2 so the result is always the same
 #missing_keywords_3=$(SOURCE_FILES="core/ drivers/ hal/ examples/ examples_linux/ MyConfig.h MySensors.h"; for keyword in $(grep -whore  'MY_[A-Z][A-Z_0-9]*' $SOURCE_FILES | sort -u ); do grep -q $keyword keywords.txt || echo $keyword; done)
 missing_keywords_3=$(SOURCE_FILES="Projects/ MyConfig.h"; for keyword in $(grep -whore  'MY_[A-Z][A-Z_0-9]*' $SOURCE_FILES | sort -u ); do grep -q $keyword keywords.txt || echo $keyword; done)
 if [ -n "$missing_keywords_3" ]; then
@@ -43,7 +44,7 @@ echo "Greetings! Here is my evaluation of your pull request:" > error_log.txt
 awk 'FNR==1{print ""}1' missing_keywords.txt missing_keywords_2.txt missing_keywords_3.txt tab_spaces_keywords.txt booleans.txt >> error_log.txt
 if [ $result -ne 0 ]; then
 	echo "" >> error_log.txt
-	echo "I am afraid there are some issues with your commit messages and/or use of keywords." >> error_log.txt
+	echo "I am afraid there are some issues with your use of keywords." >> error_log.txt
 	echo "I highly recommend reading this guide: http://chris.beams.io/posts/git-commit for tips on how to write a good commit message." >> error_log.txt
 	echo "More specifically, MySensors have some code contribution guidelines: https://www.mysensors.org/download/contributing that I am afraid all contributers need to follow." >> error_log.txt
 	echo "" >> error_log.txt
