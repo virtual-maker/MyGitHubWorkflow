@@ -20,6 +20,9 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
 
+    - name: Set execute permissions for check-commit-message.sh
+      run: chmod +x ./.ci_scripts/check-commit-message.sh
+
     - name: Check commit message format
       run: ./.ci_scripts/check-commit-message.sh
 
