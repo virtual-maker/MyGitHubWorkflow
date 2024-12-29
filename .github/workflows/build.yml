@@ -26,7 +26,7 @@ jobs:
     - name: Check commit message format
       run: ./.ci_scripts/check-commit-message.sh
 
-    - name: Check commit message format
+    - name: Check missing keywords and keywords format
       run: ./.ci_scripts/check-missing-keywords.sh
 
     - name: Set up Arduino CLI
