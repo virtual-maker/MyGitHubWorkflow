@@ -31,7 +31,7 @@ void setup() {
 // Loop counter definition
 int loopCounter = 0;
 
-boolean ledState = false;
+bool ledState = false;
 
 // the loop function runs over and over again forever
 void loop() {
