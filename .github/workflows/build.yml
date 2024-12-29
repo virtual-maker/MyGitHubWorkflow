@@ -17,10 +17,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-
     - name: Check commit message format
-      run: ./.ci_scipts/check-commit-message.sh
-
+      run: .ci_scipts/check-commit-message.sh
 
     - name: Checkout repository
       uses: actions/checkout@v2
