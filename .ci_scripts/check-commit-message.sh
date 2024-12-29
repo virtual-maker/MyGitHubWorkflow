@@ -14,8 +14,8 @@ for commit in $commits; do
     echo "Commit message header is too long: $header"
     result=1
   fi
-  if [[ ! $header =~ ^[a-z] ]]; then
-    echo "Commit message header must start with a lowercase letter: $header"
+  if [[ $header =~ ^[a-z] ]]; then
+    echo "Commit message header must not start with a lowercase letter: $header"
     result=1
   fi
   if [[ $header =~ \.$ ]]; then

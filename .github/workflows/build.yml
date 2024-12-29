@@ -20,11 +20,14 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
 
-    - name: Set execute permissions for check-commit-message.sh
-      run: chmod +x ./.ci_scripts/check-commit-message.sh
+    - name: Set execute permissions for shell scripts
+      run: chmod +x ./.ci_scripts/*.sh
 
     - name: Check commit message format
       run: ./.ci_scripts/check-commit-message.sh
+
+    - name: Check commit message format
+      run: ./.ci_scripts/check-missing-keywords.sh
 
     - name: Set up Arduino CLI
       uses: arduino/setup-arduino-cli@master
