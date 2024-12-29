@@ -63,3 +63,8 @@ if [ $result -ne 0 ]; then
 	echo "git push origin HEAD:&lt;your_branch_on_github&gt; -f<br>" >> butler.html
 	echo "<br>" >> butler.html
 fi
+
+if [ $result -ne 0 ]; then
+  cat butler.html
+  exit 1
+fi
