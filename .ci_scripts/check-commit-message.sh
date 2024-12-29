@@ -8,7 +8,7 @@ for commit in $commits; do
     echo "Commit message header is too long: $header"
     exit 1
   fi
-  if [ -n "$body" ] && [ "${body:0:1}" != $'\n' ]; then
+  if [ -n "$body" ] && [[ "$body" != $'\n'* ]]; then
     echo "Commit message body must start with an empty line: $header"
     exit 1
   fi
