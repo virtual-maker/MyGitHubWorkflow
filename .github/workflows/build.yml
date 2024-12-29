@@ -1,0 +1,151 @@
+name: Build Arduino Project
+
+on:
+  push:
+    branches:
+      - main
+      - development
+      - dev_actions
+
+  pull_request:
+    branches:
+      - main
+      - development
+      - dev_actions
+
+  # Allows you to run this workflow manually from the Actions tab for every branch
+  workflow_dispatch:
+
+jobs:
+  get_commits:
+    runs-on: ubuntu-latest
+    outputs:
+      commits: ${{ steps.get_commits.outputs.commits }}
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+    - name: Get list of commits
+      id: get_commits
+      run: |
+        # Use `--no-merges` if you want to exclude merge commits
+        commits=$(git rev-list --reverse --format="format:%H" --no-merges ${{ github.event.before }}..${{ github.sha }} | grep -v "^commit ")
+        # Convert the list of hashes into a JSON array
+        commits_json=$(echo "$commits" | jq -R -s -c 'split("\n") | map(select(length > 0))')
+        echo "commits=$commits_json" >> $GITHUB_OUTPUT
+        #### ToDo: Check if the output is correct
+        echo "C"
+        echo "$commits_json"
+        echo "D"
+
+  commit-msg-tests:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        commit: ${{ fromJson(needs.get_commits.outputs.commits || '[]') }}
+    needs: get_commits
+
+    steps:
+      #### ToDo: Check if the output is correct
+    - name: Debug commits output
+      run: |
+        echo "Commits: ${{ matrix.commit }}"
+
+    - name: Checkout repository
+      uses: actions/checkout@v2
+      with:
+        ref: ${{ matrix.commit }}
+
+    - name: Set execute permissions for shell scripts
+      run: chmod +x ./.ci_scripts/*.sh
+
+    - name: Check commit message format
+      run: ./.ci_scripts/check-commit-message.sh
+
+  static-code-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set execute permissions for shell scripts
+      run: chmod +x ./.ci_scripts/*.sh
+
+    - name: Check missing keywords and keywords format
+      run: ./.ci_scripts/check-missing-keywords.sh
+
+    - name: Install astyle
+      run: sudo apt-get install -y astyle
+
+    - name: Check wellformed code style with astyle app
+      id: check_astyle
+      run: ./.ci_scripts/check-astyle-code.sh
+      continue-on-error: true
+
+    - name: Upload astyle restyling.patch file if exists
+      if: ${{ steps.check_astyle.outcome == 'failure' }}
+      uses: actions/upload-artifact@v4
+      with:
+        name: restyling.patch
+        path: restyling.patch
+
+    - name: End job execution on astyle error
+      if: ${{ steps.check_astyle.outcome == 'failure' }}
+      run: |
+        # End job execution with error.
+        echo "::error::Code style is not wellformed. Find the Git restyling.patch in Artifacts section below."
+        exit 1
+
+    - name: Install cppcheck
+      run: sudo apt-get install -y cppcheck
+
+    - name: Run static code analysis with cppcheck
+      id: cppcheck_avr
+      run: ./.ci_scripts/check-static-cpp-code.sh
+      continue-on-error: true
+
+    - name: Upload cppcheck reports artifact
+      if: ${{ steps.cppcheck_avr.outcome == 'failure' }}
+      uses: actions/upload-artifact@v4
+      with:
+        name: cppcheck-avr.xml
+        path: cppcheck-avr.xml
+
+    - name: Upload cppcheck reports folder
+      if: ${{ steps.cppcheck_avr.outcome == 'failure' }}
+      uses: actions/upload-artifact@v4
+      with:
+        name: cppcheck_reports_folder
+        path: cppcheck-avr_cppcheck_reports/
+
+    - name: End job execution on cppcheck error
+      if: ${{ steps.cppcheck_avr.outcome == 'failure' }}
+      run: |
+        # End job execution with error.
+        echo "::error::C++ Code with errors detected. See detailed report in Artifacts section below."
+        exit 1
+
+  build-arduino-AVR:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Arduino CLI
+      uses: arduino/setup-arduino-cli@master
+
+    - name: Install dependencies
+      run: |
+        arduino-cli core update-index
+        arduino-cli core install arduino:avr
+        arduino-cli lib install "Firmata"
+        #arduino-cli lib install "Wire"
+        #arduino-cli lib install "SPI"
+        arduino-cli lib install "Servo"
+
+    - name: Compile sketch
+      run: |
+        arduino-cli compile --fqbn arduino:avr:uno Projects/Arduino/Blink/Blink.ino
