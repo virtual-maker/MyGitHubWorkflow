@@ -15,5 +15,5 @@ cppcheck-htmlreport --file="cppcheck-avr.xml" \
 --report-dir=cppcheck-avr_cppcheck_reports \
 --source-dir=.
 
-grep -q "0 total" cppcheck-avr_cppcheck_reports/index.html || exit_code=$?
+grep -q "<td>0</td><td>total</td>" cppcheck-avr_cppcheck_reports/index.html || exit_code=$?
 exit $((exit_code == 0 ? 0 : 1))
