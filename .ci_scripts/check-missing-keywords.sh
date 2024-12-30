@@ -12,7 +12,9 @@ missing_keywords=$(for keyword in $(grep -A999 '#if DOXYGEN' MyConfig.h | grep -
 if [ -n "$missing_keywords" ]; then
   echo "Keywords that are missing from keywords.txt:" > missing_keywords.txt
   echo "$missing_keywords" >> missing_keywords.txt
+####
   echo "missing_keywords"
+  cat missing_keywords.txt
   result=1
 fi
 
@@ -22,33 +24,36 @@ if [ -n "$missing_keywords_2" ]; then
   echo "Keywords in code that don't exist in keywords.txt:" > missing_keywords_2.txt
   echo "If keywords aren't in keywords.txt, they will not be highlighted in the Arduino IDE. Highlighting makes the code easier to follow and helps spot spelling mistakes." > missing_keywords_2.txt
   echo "$missing_keywords_2" >> missing_keywords_2.txt
+####
   echo "missing_keywords_2"
   cat missing_keywords_2.txt
   result=1
 fi
 
 #ToDo: The grep command for missing_keywords_3 is equal to missing_keywords_2 so the result is always the same
-#missing_keywords_3=$(SOURCE_FILES="core/ drivers/ hal/ examples/ examples_linux/ MyConfig.h MySensors.h"; for keyword in $(grep -whore  'MY_[A-Z][A-Z_0-9]*' $SOURCE_FILES | sort -u ); do grep -q $keyword keywords.txt || echo $keyword; done)
-missing_keywords_3=$(SOURCE_FILES="Projects/ MyConfig.h"; for keyword in $(grep -whore  'MY_[A-Z][A-Z_0-9]*' $SOURCE_FILES | sort -u ); do grep -q $keyword keywords.txt || echo $keyword; done)
-if [ -n "$missing_keywords_3" ]; then
-  echo "Keywords in code that don't have Doxygen comments and aren't blacklisted in keywords.txt:" > missing_keywords_3.txt
-  echo "If keywords don't have Doxygen comments, they will not be available at https://www.mysensors.org/apidocs/index.html Add Doxygen comments to make it easier for users to find and understand how to use the new keywords." > missing_keywords_3.txt
-  echo "$missing_keywords_3" >> missing_keywords_3.txt
-  echo "missing_keywords_3"
-  result=1
-fi
+##missing_keywords_3=$(SOURCE_FILES="core/ drivers/ hal/ examples/ examples_linux/ MyConfig.h MySensors.h"; for keyword in $(grep -whore  'MY_[A-Z][A-Z_0-9]*' $SOURCE_FILES | sort -u ); do grep -q $keyword keywords.txt || echo $keyword; done)
+#missing_keywords_3=$(SOURCE_FILES="Projects/ MyConfig.h"; for keyword in $(grep -whore  'MY_[A-Z][A-Z_0-9]*' $SOURCE_FILES | sort -u ); do grep -q $keyword keywords.txt || echo $keyword; done)
+#if [ -n "$missing_keywords_3" ]; then
+#  echo "Keywords in code that don't have Doxygen comments and aren't blacklisted in keywords.txt:" > missing_keywords_3.txt
+#  echo "If keywords don't have Doxygen comments, they will not be available at https://www.mysensors.org/apidocs/index.html Add Doxygen comments to make it easier for users to find and understand how to use the new keywords." > missing_keywords_3.txt
+#  echo "$missing_keywords_3" >> missing_keywords_3.txt
+#  result=1
+#fi
 
 tab_spaces_keywords=$(grep -e '[[:space:]]KEYWORD' -e '[[:space:]]LITERAL1' keywords.txt | grep -v -e $'\tLITERAL1' -e $'\tKEYWORD')
 if [ -n "$tab_spaces_keywords" ]; then
   echo "Keywords that use space instead of TAB in keywords.txt:" > tab_spaces_keywords.txt
   echo "$tab_spaces_keywords" >> tab_spaces_keywords.txt
+####
   echo "tab_spaces_keywords"
+  cat tab_spaces_keywords.txt
 result=1
 fi
 
 # Evaluate if there exists booleans in the code tree (not counting this file)
-if git grep -q boolean -- `git ls-files | grep -v butler.sh`; then
+if git grep -q boolean -- `git ls-files | grep -v check-missing-keywords.sh`; then
   echo "You have added at least one occurence of the deprecated boolean data type. Please use bool instead." > booleans.txt
+#####
   echo "booleans"
   cat booleans.txt
   result=1
