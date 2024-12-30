@@ -10,7 +10,7 @@ on:
       - main
       - development
   # Allows you to run this workflow manually from the Actions tab for every branch
-  #workflow_dispatch:
+  workflow_dispatch:
 
 jobs:
   get_commits:
@@ -25,10 +25,8 @@ jobs:
     - name: Get list of commits
       id: get_commits
       run: |
-        echo "A"
         # Use `--no-merges` if you want to exclude merge commits
         commits=$(git rev-list --reverse --format="format:%H" --no-merges ${{ github.event.before }}..${{ github.sha }} | grep -v "^commit ")
-        echo "B"
         # Convert the list of hashes into a JSON array
         commits_json=$(echo "$commits" | jq -R -s -c 'split("\n") | map(select(length > 0))')
         echo "commits=$commits_json" >> $GITHUB_OUTPUT
@@ -37,16 +35,15 @@ jobs:
         echo "$commits_json"
         echo "D"
 
-  #build:
-  static-tests:
+  commit-msg-tests:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        #commit: ${{ fromJson(needs.get_commits.outputs.commits) }}
         commit: ${{ fromJson(needs.get_commits.outputs.commits || '[]') }}
     needs: get_commits
 
     steps:
+      #### ToDo: Check if the output is correct
     - name: Debug commits output
       run: |
         echo "Commits: ${{ matrix.commit }}"
@@ -61,6 +58,16 @@ jobs:
 
     - name: Check commit message format
       run: ./.ci_scripts/check-commit-message.sh
+
+  static-code-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set execute permissions for shell scripts
+      run: chmod +x ./.ci_scripts/*.sh
 
     - name: Check missing keywords and keywords format
       run: ./.ci_scripts/check-missing-keywords.sh
@@ -86,6 +93,14 @@ jobs:
         # End job execution with error.
         echo "::error::Code style is not wellformed."
         exit 1
+
+        ########################
+  build-arduino-AVR:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
 
     - name: Set up Arduino CLI
       uses: arduino/setup-arduino-cli@master
