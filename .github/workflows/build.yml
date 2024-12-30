@@ -32,8 +32,10 @@ jobs:
     - name: Download astyle
       run: sudo apt-get install -y astyle
 
-    - name: Check wellformed code style with astyle app 
+    - name: Check wellformed code style with astyle app
+      id: check_astyle
       run: ./.ci_scripts/check-astyle-code.sh
+      continue-on-error: true
 
     - name: Upload astyle restyling.patch file if exists
       if: steps.check_astyle.outputs.result != '0'
@@ -41,6 +43,12 @@ jobs:
       with:
         name: restyling.patch
         path: restyling.patch
+
+    - name: Throw Error and end job execution
+      if: steps.check_astyle.outputs.result != '0'
+      run: |
+        echo "Code style is not wellformed. End job execution with error."
+        return 1
 
     - name: Set up Arduino CLI
       uses: arduino/setup-arduino-cli@master
