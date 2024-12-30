@@ -94,8 +94,12 @@ jobs:
         echo "::error::Code style is not wellformed."
         exit 1
 
+    #### ToDo: Find the correct version of cppcheck
+    - name: List available cppcheck versions
+      run: apt-cache policy cppcheck
+
     - name: Install cppcheck
-      run: sudo apt-get install -y cppcheck=2.1
+      run: sudo apt-get install -y cppcheck=2.3
 
     - name: Run static code analysis with cppcheck
       run: ./.ci_scripts/check-static-cpp-code.sh
