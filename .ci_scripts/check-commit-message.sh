@@ -5,6 +5,9 @@ result=0
 
 commits=$(git log --format=%H)
 for commit in $commits; do
+####
+  echo "!!! Check commit ${commit:0:7}"
+
   header=$(git log --format=%s -n 1 $commit)
   body=$(git log --format=%b -n 1 $commit)
 
