@@ -26,12 +26,13 @@ jobs:
       id: get_commits
       run: |
         echo "A"
-        commits=$(git rev-list --reverse --pretty=format:"%H" ${{ github.event.before }}..${{ github.sha }})
+        # Use `--no-merges` if you want to exclude merge commits
+        commits=$(git rev-list --reverse --format="format:%H" --no-merges ${{ github.event.before }}..${{ github.sha }} | grep -v "^commit ")
         echo "B"
-        #echo "::set-output name=commits::[$(echo $commits | jq -R -s -c 'split("\n") | map(select(length > 0))')]"
-        #echo "commits=$(echo $commits | jq -R -s -c 'split("\n") | map(select(length > 0))')" >> $GITHUB_OUTPUT
-        commits_json=$(echo $commits | jq -R -s -c 'split("\n") | map(select(length > 0))')
+        # Convert the list of hashes into a JSON array
+        commits_json=$(echo "$commits" | jq -R -s -c 'split("\n") | map(select(length > 0))')
         echo "commits=$commits_json" >> $GITHUB_OUTPUT
+        #### ToDo: Check if the output is correct
         echo "C"
         echo "$commits_json"
         echo "D"
