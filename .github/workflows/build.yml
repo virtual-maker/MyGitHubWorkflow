@@ -29,6 +29,12 @@ jobs:
     - name: Check missing keywords and keywords format
       run: ./.ci_scripts/check-missing-keywords.sh
 
+    - name: Download astyle
+      run: sudo apt-get install -y astyle
+
+    - name: Format code with astyle
+      run: astyle --options=./.ci_scripts/astylerc "Projects/Arduino/**/*.ino"
+
     - name: Set up Arduino CLI
       uses: arduino/setup-arduino-cli@master
 
