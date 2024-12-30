@@ -13,13 +13,33 @@ on:
   workflow_dispatch:
 
 jobs:
+  get_commits:
+    runs-on: ubuntu-latest
+    outputs:
+      commits: ${{ steps.get_commits.outputs.commits }}
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Get list of commits
+      id: get_commits
+      run: |
+        commits=$(git rev-list --reverse HEAD^..HEAD)
+        echo "::set-output name=commits::[$(echo $commits | jq -R -s -c 'split("\n") | map(select(length > 0))')]"
+
   #build:
   static-tests:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        commit: ${{ fromJson(needs.get_commits.outputs.commits) }}
+    needs: get_commits
 
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
+      with:
+        ref: ${{ matrix.commit }}
 
     - name: Set execute permissions for shell scripts
       run: chmod +x ./.ci_scripts/*.sh
@@ -45,7 +65,7 @@ jobs:
         name: restyling.patch
         path: restyling.patch
 
-    - name: End job execution on error
+    - name: End job execution on astyle error
       if: ${{ steps.check_astyle.outcome == 'failure' }}
       run: |
         # End job execution with error.
