@@ -39,8 +39,8 @@ jobs:
 
     - name: Upload astyle restyling.patch file if exists
       #if: steps.check_astyle.outputs.result != '0'
-      if: ${{ failure() }}
-      #if: ${{ steps.check_astyle.outputs.result != '0' }}
+      #if: ${{ failure() }}
+      if: ${{ steps.check_astyle.outcome == 'failure' }}
       uses: actions/upload-artifact@v3
       with:
         name: restyling.patch
@@ -49,7 +49,8 @@ jobs:
     - name: Throw Error and end job execution
       #if: steps.check_astyle.outputs.result != '0'
       #if: failure()
-      if: ${{ steps.check_astyle.outputs.result != '0' }}
+      #if: ${{ steps.check_astyle.outputs.result != '0' }}
+      if: ${{ steps.check_astyle.outcome == 'failure' }}
       run: |
         echo "Code style is not wellformed. End job execution with error."
         return 1
