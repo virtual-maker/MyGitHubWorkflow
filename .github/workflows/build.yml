@@ -26,8 +26,12 @@ jobs:
       run: |
         echo "A"
         #commits=$(git rev-list --reverse ${{ github.event.before }}..${{ github.sha }})
+
         #commits=$(git rev-list ${{ github.event.before }}..${{ github.sha }})
-        commits=$(git rev-list ${{ github.event.before }}..${{ github.sha }} --branches=development)
+        #commits=$(git rev-list ${{ github.event.before }}..${{ github.sha }} --branches=development)
+        commits=$(git rev-list --branches=development --reverse --pretty=format:"%H" ${{ github.event.before }}..${{ github.sha }} --branches=development)
+
+
         echo "B"
         echo "::set-output name=commits::[$(echo $commits | jq -R -s -c 'split("\n") | map(select(length > 0))')]"
         echo "C"
