@@ -72,7 +72,7 @@ jobs:
     - name: Check missing keywords and keywords format
       run: ./.ci_scripts/check-missing-keywords.sh
 
-    - name: Download astyle
+    - name: Install astyle
       run: sudo apt-get install -y astyle
 
     - name: Check wellformed code style with astyle app
@@ -94,7 +94,12 @@ jobs:
         echo "::error::Code style is not wellformed."
         exit 1
 
-        ########################
+    - name: Install cppcheck
+      run: sudo apt-get install -y cppcheck=2.1
+
+    - name: Run static code analysis with cppcheck
+      run: ./.ci_scripts/check-static-cpp-code.sh
+
   build-arduino-AVR:
     runs-on: ubuntu-latest
 
