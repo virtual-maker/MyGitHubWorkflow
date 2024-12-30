@@ -38,22 +38,17 @@ jobs:
       continue-on-error: true
 
     - name: Upload astyle restyling.patch file if exists
-      #if: steps.check_astyle.outputs.result != '0'
-      #if: ${{ failure() }}
       if: ${{ steps.check_astyle.outcome == 'failure' }}
       uses: actions/upload-artifact@v3
       with:
         name: restyling.patch
         path: restyling.patch
 
-    - name: Throw Error and end job execution
-      #if: steps.check_astyle.outputs.result != '0'
-      #if: failure()
-      #if: ${{ steps.check_astyle.outputs.result != '0' }}
+    - name: End job execution on error
       if: ${{ steps.check_astyle.outcome == 'failure' }}
       run: |
         echo "Code style is not wellformed. End job execution with error."
-        return 1
+        exit 1
 
     - name: Set up Arduino CLI
       uses: arduino/setup-arduino-cli@master
