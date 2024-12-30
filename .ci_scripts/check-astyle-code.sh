@@ -6,7 +6,8 @@ result=0
 
 # Evaluate coding style
 astyle --options=.mystools/astyle/config/style.cfg -nq --recursive "*.h" "*.c" "*.cpp"
-git diff > restyling.patch
+#git diff > restyling.patch
+git diff -- . ':!.ci_scripts' > restyling.patch
 if [ -s restyling.patch ]; then
 	echo "I am afraid your coding style is not entirely in line with the MySensors prefered style." >> error_log.txt
 	echo "The restyling.patch file, if applied to your PR, will make it follow the MySensors coding standards." >> error_log.txt

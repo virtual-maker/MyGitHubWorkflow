@@ -39,7 +39,7 @@ jobs:
 
     - name: Upload astyle restyling.patch file if exists
       if: ${{ steps.check_astyle.outcome == 'failure' }}
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: restyling.patch
         path: restyling.patch
