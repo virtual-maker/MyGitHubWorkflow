@@ -35,6 +35,13 @@ jobs:
     - name: Check wellformed code style with astyle app 
       run: ./.ci_scripts/check-astyle-code.sh
 
+    - name: Upload astyle restyling.patch file if exists
+      if: steps.check_astyle.outputs.result != '0'
+      uses: actions/upload-artifact@v2
+      with:
+        name: restyling.patch
+        path: restyling.patch
+
     - name: Set up Arduino CLI
       uses: arduino/setup-arduino-cli@master
 

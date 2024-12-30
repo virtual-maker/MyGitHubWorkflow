@@ -26,6 +26,14 @@ if [ $result -ne 0 ]; then
 	echo "If you disagree to this, please discuss it in the GitHub pull request thread." >> error_log.txt
 	echo "" >> error_log.txt
 fi
-echo "Yours sincerely, The Butler, serving the MySensors community" >> error_log.txt
+echo "Thank you for contributing to the MySensors community." >> error_log.txt
 cat error_log.txt
 ####exit $result
+
+####
+echo "File restyling.patch:"
+cat restyling.patch
+echo "<END>"
+
+# End and return the result value so that it can processed by the calling script
+exit $result
