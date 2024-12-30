@@ -49,8 +49,8 @@ jobs:
       run: |
         # End job execution with error.
         echo "Code style is not wellformed."
-        echo "is_failed=true" >> $GITHUB_ENV
-        #exit 1
+        ####echo "is_failed=true" >> $GITHUB_ENV
+        exit 1
 
     - name: Set up Arduino CLI
       uses: arduino/setup-arduino-cli@master
