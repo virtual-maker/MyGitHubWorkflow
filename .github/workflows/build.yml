@@ -99,7 +99,7 @@ jobs:
       run: apt-cache policy cppcheck
 
     - name: Install cppcheck
-      run: sudo apt-get install -y cppcheck=2.3
+      run: sudo apt-get install -y cppcheck
 
     - name: Run static code analysis with cppcheck
       run: ./.ci_scripts/check-static-cpp-code.sh
