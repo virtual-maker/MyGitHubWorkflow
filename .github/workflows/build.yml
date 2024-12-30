@@ -47,8 +47,10 @@ jobs:
     - name: End job execution on error
       if: ${{ steps.check_astyle.outcome == 'failure' }}
       run: |
-        echo "Code style is not wellformed. End job execution with error."
-        exit 1
+        # End job execution with error.
+        echo "Code style is not wellformed."
+        echo "is_failed=true" >> $GITHUB_ENV
+        #exit 1
 
     - name: Set up Arduino CLI
       uses: arduino/setup-arduino-cli@master
