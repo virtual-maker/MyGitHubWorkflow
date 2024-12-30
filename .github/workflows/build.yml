@@ -10,7 +10,7 @@ on:
       - main
       - development
   # Allows you to run this workflow manually from the Actions tab for every branch
-  workflow_dispatch:
+  #workflow_dispatch:
 
 jobs:
   get_commits:
@@ -21,28 +21,35 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
       with:
-        fetch-depth: 100
+        fetch-depth: 0
     - name: Get list of commits
       id: get_commits
       run: |
         echo "A"
-        #commits=$(git rev-list --reverse ${{ github.event.before }}..${{ github.sha }})
-        #commits=$(git rev-list ${{ github.event.before }}..${{ github.sha }})
-        #commits=$(git rev-list ${{ github.event.before }}..${{ github.sha }} --branches=development)
         commits=$(git rev-list --reverse --pretty=format:"%H" ${{ github.event.before }}..${{ github.sha }})
         echo "B"
-        echo "::set-output name=commits::[$(echo $commits | jq -R -s -c 'split("\n") | map(select(length > 0))')]"
+        #echo "::set-output name=commits::[$(echo $commits | jq -R -s -c 'split("\n") | map(select(length > 0))')]"
+        #echo "commits=$(echo $commits | jq -R -s -c 'split("\n") | map(select(length > 0))')" >> $GITHUB_OUTPUT
+        commits_json=$(echo $commits | jq -R -s -c 'split("\n") | map(select(length > 0))')
+        echo "commits=$commits_json" >> $GITHUB_OUTPUT
         echo "C"
+        echo "$commits_json"
+        echo "D"
 
   #build:
   static-tests:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        commit: ${{ fromJson(needs.get_commits.outputs.commits) }}
+        #commit: ${{ fromJson(needs.get_commits.outputs.commits) }}
+        commit: ${{ fromJson(needs.get_commits.outputs.commits || '[]') }}
     needs: get_commits
 
     steps:
+    - name: Debug commits output
+      run: |
+        echo "Commits: ${{ matrix.commit }}"
+
     - name: Checkout repository
       uses: actions/checkout@v2
       with:
