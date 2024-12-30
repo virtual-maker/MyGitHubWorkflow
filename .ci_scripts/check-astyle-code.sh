@@ -4,9 +4,9 @@ result=0
 # Create empty file to store the astyle issue
 : > error_log.txt
 
-# Evaluate coding style
+# Evaluate coding style by astyle
 astyle --options=.mystools/astyle/config/style.cfg -nq --recursive "*.h" "*.c" "*.cpp"
-####git diff > restyling.patch
+# Create diff file for any required restyling; exclude the .ci_scripts directory from the diff
 git diff -- . ':!.ci_scripts' > restyling.patch
 if [ -s restyling.patch ]; then
 	echo "I am afraid your coding style is not entirely in line with the MySensors prefered style." >> error_log.txt
