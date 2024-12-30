@@ -94,25 +94,31 @@ jobs:
         echo "::error::Code style is not wellformed."
         exit 1
 
-    #### ToDo: Find the correct version of cppcheck
-    - name: List available cppcheck versions
-      run: apt-cache policy cppcheck
-
     - name: Install cppcheck
       run: sudo apt-get install -y cppcheck
 
     - name: Run static code analysis with cppcheck
+      id: cppcheck_avr
       run: ./.ci_scripts/check-static-cpp-code.sh
       continue-on-error: true
 
     - name: Zip cppcheck reports
+      if: ${{ steps.check_astyle.outcome == 'failure' }}
       run: zip -r cppcheck_reports.zip cppcheck-avr_cppcheck_reports/
 
     - name: Upload cppcheck reports artifact
+      if: ${{ steps.check_astyle.outcome == 'failure' }}
       uses: actions/upload-artifact@v4
       with:
         name: cppcheck_reports
         path: cppcheck_reports.zip
+
+    - name: Upload cppcheck reports artifact
+      if: ${{ steps.check_astyle.outcome == 'failure' }}
+      uses: actions/upload-artifact@v4
+      with:
+        name: cppcheck-avr
+        path: cppcheck-avr.xml
 
   build-arduino-AVR:
     runs-on: ubuntu-latest
