@@ -91,7 +91,7 @@ jobs:
       if: ${{ steps.check_astyle.outcome == 'failure' }}
       run: |
         # End job execution with error.
-        echo "::error::Code style is not wellformed."
+        echo "::error::Code style is not wellformed. Find the Git restyling.patch in Artifacts section below."
         exit 1
 
     - name: Install cppcheck
@@ -101,17 +101,6 @@ jobs:
       id: cppcheck_avr
       run: ./.ci_scripts/check-static-cpp-code.sh
       continue-on-error: true
-
-    - name: Zip cppcheck reports
-      if: ${{ steps.cppcheck_avr.outcome == 'failure' }}
-      run: zip -r cppcheck_reports.zip cppcheck-avr_cppcheck_reports/
-
-    - name: Upload cppcheck reports artifact
-      if: ${{ steps.cppcheck_avr.outcome == 'failure' }}
-      uses: actions/upload-artifact@v4
-      with:
-        name: cppcheck_reports
-        path: cppcheck_reports.zip
 
     - name: Upload cppcheck reports artifact
       if: ${{ steps.cppcheck_avr.outcome == 'failure' }}
@@ -126,6 +115,13 @@ jobs:
       with:
         name: cppcheck_reports_folder
         path: cppcheck-avr_cppcheck_reports/
+
+    - name: End job execution on cppcheck error
+      if: ${{ steps.cppcheck_avr.outcome == 'failure' }}
+      run: |
+        # End job execution with error.
+        echo "::error::C++ Code with errors detected. See detailed report in Artifacts section below."
+        exit 1
 
   build-arduino-AVR:
     runs-on: ubuntu-latest
