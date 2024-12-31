@@ -5,10 +5,14 @@ on:
     branches:
       - main
       - development
+      - dev_actions
+
   pull_request:
     branches:
       - main
       - development
+      - dev_actions
+
   # Allows you to run this workflow manually from the Actions tab for every branch
   workflow_dispatch:
 
